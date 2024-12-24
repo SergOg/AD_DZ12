@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">DZ12</string>
+    <string name="result">Здесь будет отображаться результат запроса</string>
+    <string name="search">Поиск</string>
+</resources>
