@@ -70,7 +70,7 @@ class MainFragment : Fragment() {
                     }
             }
     }
-    fun status(t: Boolean, s: String?) {
+    private fun status(t: Boolean, s: String?) {
         binding.progress.isVisible = t
         binding.requestLayout.error = s
     }
