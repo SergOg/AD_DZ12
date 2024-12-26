@@ -8,7 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
 import ru.gb.dz12.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
@@ -47,27 +50,29 @@ class MainFragment : Fragment() {
             viewModel.onSignInClick(request)
         }
         viewLifecycleOwner.lifecycleScope
-            .launchWhenStarted {
-                viewModel.state
-                    .collect { state ->
-                        when (state) {
-                            State.Loading -> {
-                                status(true, null)
-                                binding.button.isEnabled = false
-                            }
+            .launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.state
+                        .collect { state ->
+                            when (state) {
+                                State.Loading -> {
+                                    status(true, null)
+                                    binding.button.isEnabled = false
+                                }
 
-                            State.Success -> {
-                                status(false, null)
-                                checkText()
-                            }
+                                State.Success -> {
+                                    status(false, null)
+                                    checkText()
+                                }
 
-                            is State.Error -> {
-                                binding.progress.isVisible = false
-                                binding.textView.text = state.requestError
-                                checkText()
+                                is State.Error -> {
+                                    binding.progress.isVisible = false
+                                    binding.textView.text = state.requestError
+                                    checkText()
+                                }
                             }
                         }
-                    }
+                }
             }
     }
     private fun status(t: Boolean, s: String?) {
