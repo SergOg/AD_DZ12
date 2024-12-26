@@ -17,14 +17,17 @@ class MainFragment : Fragment() {
         fun newInstance() = MainFragment()
     }
 
-    private lateinit var binding: FragmentMainBinding
+    private var _binding: FragmentMainBinding? = null       //так будет для фрагмента
+    private val binding get() = _binding!!
+
+    //    private lateinit var binding: FragmentMainBinding     //так будет для активити
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMainBinding.inflate(inflater, container, false)
+        _binding = FragmentMainBinding.inflate(inflater, container, false)
         binding.request.doOnTextChanged { text, start, before, count ->
             checkText()
         }
@@ -49,14 +52,12 @@ class MainFragment : Fragment() {
                     .collect { state ->
                         when (state) {
                             State.Loading -> {
-                                binding.progress.isVisible = true
-                                binding.requestLayout.error = null
+                                status(true, null)
                                 binding.button.isEnabled = false
                             }
 
                             State.Success -> {
-                                binding.progress.isVisible = false
-                                binding.requestLayout.error = null
+                                status(false, null)
                                 checkText()
                             }
 
@@ -68,5 +69,9 @@ class MainFragment : Fragment() {
                         }
                     }
             }
+    }
+    fun status(t: Boolean, s: String?) {
+        binding.progress.isVisible = t
+        binding.requestLayout.error = s
     }
 }
